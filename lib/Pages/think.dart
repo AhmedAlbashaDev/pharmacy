@@ -113,16 +113,41 @@ class _ThinkState extends State<Think> {
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              Container(
-                                margin:EdgeInsets.only(right: 15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(productsList[index].name,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
-                                    Text(productsList[index].description,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
-                                    Text(productsList[index].price,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
-                                  ],
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    margin:EdgeInsets.only(right: 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('اسم المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                        Text(productsList[index].name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin:EdgeInsets.only(right: 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('سعر المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                        Text(productsList[index].price,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin:EdgeInsets.only(right: 15),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('اسم الصيدليه',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                        Text(productsList[index].pharmacy.name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               )
                             ],
                           ),

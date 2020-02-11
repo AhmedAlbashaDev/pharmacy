@@ -110,18 +110,17 @@ class _OrdersState extends State<Orders> {
                   color: Theme.of(context).primaryColor,
                   child: Column(
                     children: <Widget>[
-                      Container(
-                        width: 120.0,
-                        height: 120.0,
-                        decoration: BoxDecoration(
-                            color: Colors.blue,
-                            image: new DecorationImage(
-                                image:
-                                new ExactAssetImage('lib/assets/per.jpg'),
-                                fit: BoxFit.cover),
-                            border: Border.all(color: Colors.blue, width: 5.0),
-                            borderRadius: new BorderRadius.all(
-                                const Radius.circular(80.0))),
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'lib/assets/logo.png',
+                            image: userImage != null ? baseImageURL + userImage : baseImageURL + '',
+                            width: 120,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ), //____________LogoApp______________
                     ],
                   ),

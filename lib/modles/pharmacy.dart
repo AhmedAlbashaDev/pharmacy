@@ -2,7 +2,7 @@ class Pharmacy {
   int id;
   String name;
   String email;
-  Null emailVerifiedAt;
+  String emailVerifiedAt;
   String phone;
   String image;
   String userType;
