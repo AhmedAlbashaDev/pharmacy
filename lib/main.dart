@@ -120,7 +120,7 @@ class _MyappState extends State<Myapp> with SingleTickerProviderStateMixin{
             children: <Widget>[
               SizedBox(height: 160,),
               Image.asset(
-                'lib/assets/mylogo.jpg',
+                'lib/assets/logo.png',
                 width: MediaQuery.of(context).size.width / 100 * 100,
                 height: MediaQuery.of(context).size.height / 100 * 50,
               ),//___________logo______________________

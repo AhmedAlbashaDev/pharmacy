@@ -24,7 +24,7 @@ class Acall extends StatelessWidget {
                     children: <Widget>[
                       CircleAvatar(
                         radius: 60.0,
-                        backgroundImage: AssetImage('lib/assets/mylogo.jpg'),
+                        backgroundImage: AssetImage('lib/assets/logo.png'),
                       ),
                     ],
                   )

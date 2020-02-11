@@ -231,7 +231,7 @@ class _OrdersState extends State<Orders> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: FadeInImage.assetNetwork(
-                            placeholder: 'lib/assets/mylogo.jpg',
+                            placeholder: 'lib/assets/logo.png',
                             image: baseImageURL + ordersList[index].image,
                             width: 90,
                             height: 90,

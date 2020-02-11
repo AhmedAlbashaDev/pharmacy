@@ -44,7 +44,7 @@ class _UserProState extends State<UserPro> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(80),
                     child: FadeInImage.assetNetwork(
-                        placeholder: 'lib/assets/mylogo.jpg',
+                        placeholder: 'lib/assets/logo.png',
                         image: userImage != null ? baseImageURL + userImage : baseImageURL + '',
                       width: 120,
                       height: 120,

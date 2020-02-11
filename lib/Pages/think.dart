@@ -106,7 +106,7 @@ class _ThinkState extends State<Think> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
                                 child: FadeInImage.assetNetwork(
-                                  placeholder: 'lib/assets/mylogo.jpg',
+                                  placeholder: 'lib/assets/logo.png',
                                   image: baseImageURL + productsList[index].image,
                                   width: 90,
                                   height: 90,

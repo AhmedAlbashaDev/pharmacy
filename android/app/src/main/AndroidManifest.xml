@@ -11,8 +11,8 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="pharmacy"
-        android:icon="@mipmap/ic_launcher">
+        android:label="Panadol"
+        android:icon="@mipmap/launcher_icon">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB8EtFSZqEz5Al14TEX7cBViMQS7YtH5E8"/>

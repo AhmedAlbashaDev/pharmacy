@@ -270,7 +270,7 @@ class _UserState extends State<User> {
                           child: CircleAvatar(
                             radius: 60.0,
                             backgroundImage:
-                                AssetImage('lib/assets/mylogo.jpg'),
+                                AssetImage('lib/assets/logo.png'),
                           ),
                         ), //_______________Logo_______________
 

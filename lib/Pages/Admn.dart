@@ -279,7 +279,7 @@ class _AdminState extends State<Admin> {
                         child: CircleAvatar(
                           radius: 60.0,
                           backgroundImage:
-                              AssetImage('lib/assets/mylogo.jpg'),
+                              AssetImage('lib/assets/logo.png'),
                         )), //____________________________________________________________________
                     SizedBox(
                       height: 40,
