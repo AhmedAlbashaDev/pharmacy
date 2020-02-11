@@ -566,7 +566,7 @@ class _UserState extends State<User> {
                                 child: TextFormField(
                                   controller: phone,
                                   decoration: InputDecoration(
-                                    hintText: "رقم الهـاتف",
+                                    hintText: "رقم الهاتف - 09-------",
                                     labelStyle: TextStyle(color: Colors.grey),
                                     border: UnderlineInputBorder(
                                         borderSide: BorderSide.none),
@@ -646,7 +646,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال اسم المستخدم اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -658,7 +658,19 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال كلمة المرور اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIos: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
+                                return;
+                              }
+                              else if(password.text.trim().length > 10){
+                                Fluttertoast.showToast(
+                                    msg: "اقصي حد لكلمة المرور 10 خانات",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -670,7 +682,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال البريد الالكتروني اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -682,7 +694,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال رقم الهاتف اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -694,7 +706,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "قم باختيار صورتك الشخصيه اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -706,7 +718,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "قم بكتابة موقعك اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
@@ -718,7 +730,7 @@ class _UserState extends State<User> {
                                 Fluttertoast.showToast(
                                     msg: "قم بكتابة موقعك اولا",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
+                                    gravity: ToastGravity.BOTTOM,
                                     timeInSecForIos: 1,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
