@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pharmacy/Pages/Admn.dart';
@@ -9,6 +11,7 @@ import 'package:pharmacy/Pages/Home.dart';
 import 'package:pharmacy/Pages/UserRe.dart';
 import 'package:pharmacy/Pages/think.dart';
 import 'package:pharmacy/globals.dart';
+import 'package:pharmacy/modles/orders.dart';
 import 'package:pharmacy/modles/pharmacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -17,6 +20,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pharmacy/Pages/UserCall.dart';
 import 'package:pharmacy/Pages/UserPro.dart';
+import 'dart:ui' as ui;
+
 
 class FirstScreen extends StatefulWidget {
   const FirstScreen({Key key}) : super(key: key);
@@ -44,13 +49,18 @@ class _FirstScreen extends State<FirstScreen> {
   List<Pharmacy> pharmacyList;
   final Map<String, Marker> _markers = {};
 
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png)).buffer.asUint8List();
+  }
 
   getPharmacies() async {
     try {
       setState(() {
         loading = true;
       });
-
 
       var response = await dioClient.get(baseURL + 'getPharmacies');
 
@@ -67,6 +77,80 @@ class _FirstScreen extends State<FirstScreen> {
         pharmacies.forEach((pharmacy){
           pharmacyList.add(Pharmacy.fromJson(pharmacy));
         });
+
+        /*if(myOrdersList.isNotEmpty){
+          pharmacyList.forEach((pharmacy){
+            myOrdersList.forEach((order) {
+
+              if(order.pharmacyId == '${pharmacy.id}'){
+                var marker = Marker(
+                  markerId: MarkerId(pharmacy.name),
+                  position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+                  infoWindow: InfoWindow(
+                    title: pharmacy.name,
+                    snippet: '${pharmacy.phone}',
+                  ),
+                  icon: BitmapDescriptor.fromAsset('lib/assets/marker.png',),
+                );
+                _markers['${pharmacy.name} ${order.id}'] = marker;
+                return;
+              }else{
+                var marker = Marker(
+                  markerId: MarkerId(pharmacy.name),
+                  position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+                  infoWindow: InfoWindow(
+                    title: pharmacy.name,
+                    snippet: '${pharmacy.phone}',
+                  ),
+                  icon: BitmapDescriptor.fromAsset('lib/assets/marker_red.png',),
+                );
+                _markers['${pharmacy.name} ${order.id}'] = marker;
+              }
+
+//            if(order.pharmacyId != null){
+//              if(order.pharmacyId == '${pharmacy.id}'){
+//                print('Find ${pharmacy.name}');
+//                marker = Marker(
+//                  markerId: MarkerId(pharmacy.name),
+//                  position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+//                  infoWindow: InfoWindow(
+//                    title: pharmacy.name,
+//                    snippet: '${pharmacy.phone}',
+//                  ),
+//                  icon: BitmapDescriptor.fromAsset('lib/assets/marker.png',),
+//                );
+//                _markers[pharmacy.name] = marker;
+//              }
+//            }
+//            else{
+//              print('Not Find ${pharmacy.name}');
+//              marker = Marker(
+//                markerId: MarkerId(pharmacy.name),
+//                position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+//                infoWindow: InfoWindow(
+//                  title: pharmacy.name,
+//                  snippet: '${pharmacy.phone}',
+//                ),
+//                icon: BitmapDescriptor.fromAsset('lib/assets/marker_red.png',),
+//              );
+//              _markers[pharmacy.name] = marker;
+//            }
+
+            });
+          });
+        }
+        else{
+          var marker = Marker(
+            markerId: MarkerId(pharmacy.name),
+            position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+            infoWindow: InfoWindow(
+              title: pharmacy.name,
+              snippet: '${pharmacy.phone}',
+            ),
+            icon: BitmapDescriptor.fromAsset('lib/assets/marker_red.png',),
+          );
+          _markers['${pharmacy.name} ${order.id}'] = marker;
+        }*/
 
         print('LENGTH ${pharmacies.length}');
         setState(() {
@@ -92,6 +176,66 @@ class _FirstScreen extends State<FirstScreen> {
       throw error;
     }
   }
+
+  List<Order> myOrdersList;
+
+  getMyOrders() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+
+      FormData form = FormData.fromMap({
+        'userId' : userId,
+      });
+
+      var response = await dioClient.post(baseURL + 'getMyOrders',data: form);
+
+      print('response $response');
+
+      var data = response.data;
+
+      if(data['success'] == true){
+
+        myOrdersList = new List();
+
+        var orders = data['orders'] as List;
+
+        orders.forEach((product){
+          myOrdersList.add(Order.fromJson(product));
+        });
+
+        print('LENGTH ${orders.length}');
+        setState(() {
+          loading = false;
+        });
+
+        Geolocator().getCurrentPosition().then((currloc) {
+          setState(() {
+            currentLocation = currloc;
+          });
+        });
+      }
+    } on DioError catch (error) {
+      setState(() {
+        loading = false;
+      });
+      print('ERROR Code ${error.response.statusCode}');
+      print('ERROR Message ${error.response.data}');
+      switch (error.type) {
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.CANCEL:
+          throw error;
+          break;
+        default:
+          throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
   createOrder({String name}) async {
     try {
@@ -164,14 +308,8 @@ class _FirstScreen extends State<FirstScreen> {
   @override
   void initState() {
     super.initState();
-
+    getMyOrders();
     getPharmacies();
-
-    Geolocator().getCurrentPosition().then((currloc) {
-      setState(() {
-        currentLocation = currloc;
-      });
-    });
   }
 
   @override
@@ -512,16 +650,49 @@ class _FirstScreen extends State<FirstScreen> {
 
       _markers.clear();
       for (final pharmacy in pharmacyList) {
-        final marker = Marker(
-          markerId: MarkerId(pharmacy.name),
-          position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
-          infoWindow: InfoWindow(
-            title: pharmacy.name,
-            snippet: '${pharmacy.phone}',
-          ),
-        );
-        _markers[pharmacy.name] = marker;
+       if(myOrdersList.isNotEmpty){
+         myOrdersList.forEach((order){
+           if(order.pharmacyId == '${pharmacy.id}'){
+             final marker = Marker(
+               markerId: MarkerId(pharmacy.name),
+               position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+               infoWindow: InfoWindow(
+                 title: pharmacy.name,
+                 snippet: '${pharmacy.phone}',
+               ),
+               icon: BitmapDescriptor.fromAsset('lib/assets/marker.png',),
+             );
+             _markers['${pharmacy.name} ${order.id}'] = marker;
+           }
+           else{
+             final marker = Marker(
+               markerId: MarkerId(pharmacy.name),
+               position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+               infoWindow: InfoWindow(
+                 title: pharmacy.name,
+                 snippet: '${pharmacy.phone}',
+               ),
+               icon: BitmapDescriptor.fromAsset('lib/assets/marker_red.png',),
+             );
+             _markers['${pharmacy.name} ${order.id}'] = marker;
+           }
+         });
+       }
+       else{
+         final marker = Marker(
+           markerId: MarkerId(pharmacy.name),
+           position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+           infoWindow: InfoWindow(
+             title: pharmacy.name,
+             snippet: '${pharmacy.phone}',
+           ),
+           icon: BitmapDescriptor.fromAsset('lib/assets/marker_red.png',),
+         );
+         _markers['${pharmacy.name}'] = marker;
+       }
+
       }
     });
+
   }
 }

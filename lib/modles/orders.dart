@@ -3,6 +3,8 @@ class Order {
   String userId;
   String name;
   String image;
+  String status;
+  String pharmacyId;
   String createdAt;
   String updatedAt;
 
@@ -11,6 +13,8 @@ class Order {
         this.userId,
         this.name,
         this.image,
+        this.status,
+        this.pharmacyId,
         this.createdAt,
         this.updatedAt});
 
@@ -19,6 +23,8 @@ class Order {
     userId = json['userId'];
     name = json['name'];
     image = json['image'];
+    status = json['status'];
+    pharmacyId = json['pharmacyId'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }

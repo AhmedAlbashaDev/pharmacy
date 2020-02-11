@@ -83,6 +83,59 @@ class _OrdersState extends State<Orders> {
     }
   }
 
+  updateOrderStatus({String orderId}) async {
+    try {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+      );
+
+      FormData form = FormData.fromMap({
+        'pharmacyId' : userId,
+        'orderId' : orderId,
+      });
+
+      var response = await dioClient.post(baseURL + 'updateOrderStatus',data: form);
+
+      print('response $response');
+
+      var data = response.data;
+
+      if(data['success'] == true){
+
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Orders()));
+      }
+    } on DioError catch (error) {
+      setState(() {
+        loading = false;
+      });
+      print('ERROR Code ${error.response.statusCode}');
+      print('ERROR Message ${error.response.data}');
+      switch (error.type) {
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.CANCEL:
+          throw error;
+          break;
+        default:
+          throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -226,24 +279,46 @@ class _OrdersState extends State<Orders> {
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.all(3),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'lib/assets/logo.png',
-                            image: baseImageURL + ordersList[index].image,
-                            width: 90,
-                            height: 90,
-                            fit: BoxFit.cover,
-                          ),
+                        Row(
+                          children: <Widget>[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'lib/assets/logo.png',
+                                image: baseImageURL + ordersList[index].image,
+                                width: 90,
+                                height: 90,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Container(
+                              margin:EdgeInsets.only(right: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(ordersList[index].name,style: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                        Container(
-                          margin:EdgeInsets.only(right: 25),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(ordersList[index].name,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
-                            ],
+                        GestureDetector(
+                          onTap: (){
+                            updateOrderStatus(orderId: '${ordersList[index].id}');
+                          },
+                          child: Container(
+                            width: 80,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            margin:EdgeInsets.only(left: 10),
+                            child: Center(
+                              child: Text('قبول الطلب',style: TextStyle(color: Colors.grey[100],fontSize: 15,fontWeight: FontWeight.w600),),
+                            )
                           ),
                         )
                       ],

@@ -103,51 +103,57 @@ class _ThinkState extends State<Think> {
                           padding: EdgeInsets.all(3),
                           child: Row(
                             children: <Widget>[
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder: 'lib/assets/logo.png',
-                                  image: baseImageURL + productsList[index].image,
-                                  width: 90,
-                                  height: 90,
-                                  fit: BoxFit.cover,
+                              Expanded(
+                                flex:1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: 'lib/assets/logo.png',
+                                    image: baseImageURL + productsList[index].image,
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Container(
-                                    margin:EdgeInsets.only(right: 15),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text('اسم المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
-                                        Text(productsList[index].name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
-                                      ],
+                              Expanded(
+                                flex: 4,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin:EdgeInsets.only(right: 15),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text('اسم المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                          Text(productsList[index].name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Container(
-                                    margin:EdgeInsets.only(right: 15),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text('سعر المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
-                                        Text(productsList[index].price,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
-                                      ],
+                                    Container(
+                                      margin:EdgeInsets.only(right: 15),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text('سعر المنتج',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                          Text(productsList[index].price,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Container(
-                                    margin:EdgeInsets.only(right: 15),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text('اسم الصيدليه',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
-                                        Text(productsList[index].pharmacy.name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
-                                      ],
+                                    Container(
+                                      margin:EdgeInsets.only(right: 15),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text('اسم الصيدليه',style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                          Text(productsList[index].pharmacy.name,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               )
                             ],
                           ),
