@@ -53,6 +53,9 @@ class _UserState extends State<User> {
 
          var response = await dioClient.post(baseURL + 'register',data: form);
 
+         print('reponse $response');
+
+
          var data = response.data;
 
          if(data['success'] == true){
@@ -66,6 +69,15 @@ class _UserState extends State<User> {
            pref.setString('userImage', '${data['user']['image']}');
            pref.setString('userType', '${data['user']['userType']}');
            pref.setString('access_token', '${data['access_token']}');
+
+           setState(() {
+             userId = pref.getString('userId');
+             userImage = pref.getString('userImage');
+             userPhone = pref.getString('userPhone');
+             userName = pref.getString('userName');
+             userEmail = pref.getString('userEmail');
+             userType = pref.getString('userType');
+           });
 
            Navigator.pop(context);
            Navigator.pushReplacement(
@@ -125,6 +137,8 @@ class _UserState extends State<User> {
 
       var response = await dioClient.post(baseURL + 'login',data: form);
 
+      print('reponse $response');
+
       var data = response.data;
 
       if(data['success'] == true){
@@ -139,6 +153,15 @@ class _UserState extends State<User> {
         pref.setString('userType', '${data['user']['userType']}');
         pref.setString('access_token', '${data['access_token']}');
 
+        setState(() {
+          userId = pref.getString('userId');
+          userImage = pref.getString('userImage');
+          userPhone = pref.getString('userPhone');
+          userName = pref.getString('userName');
+          userEmail = pref.getString('userEmail');
+          userType = pref.getString('userType');
+        });
+
         Navigator.pop(context);
         Navigator.pushReplacement(
             context,
@@ -151,6 +174,19 @@ class _UserState extends State<User> {
             gravity: ToastGravity.BOTTOM,
             timeInSecForIos: 1,
             backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+      else{
+        print('22');
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+            msg: '${data['message']}',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 2,
+            backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0
         );

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacy/Pages/empty_widget.dart';
 import 'package:pharmacy/modles/products.dart';
 
 import '../globals.dart';
@@ -12,6 +13,7 @@ class Think extends StatefulWidget {
 class _ThinkState extends State<Think> {
 
   var loading = false;
+  var empty = false;
   List<Product> productsList;
 
   getProducts() async {
@@ -33,6 +35,12 @@ class _ThinkState extends State<Think> {
         products.forEach((product){
           productsList.add(Product.fromJson(product));
         });
+
+        if(productsList.length == 0){
+          setState(() {
+            empty = true;
+          });
+        }
 
         print('LENGTH ${productsList.length}');
         setState(() {
@@ -73,15 +81,56 @@ class _ThinkState extends State<Think> {
       child: Container(
         child: Scaffold(
           appBar: AppBar(
-            title: Text('منتجاتي'),
+            title: Text('المنتجات'),
           ),
           body: loading
               ? Center(
                 child: CircularProgressIndicator(),
               )
+              : empty
+              ? EmptyWidget()
               :Column(
                 children: <Widget>[
-
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context,index){
+                        return Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(20)
+                          ),
+                          margin: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(3),
+                          child: Row(
+                            children: <Widget>[
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'lib/assets/mylogo.jpg',
+                                  image: baseImageURL + productsList[index].image,
+                                  width: 90,
+                                  height: 90,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              Container(
+                                margin:EdgeInsets.only(right: 15),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(productsList[index].name,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.grey[800]),),
+                                    Text(productsList[index].description,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                    Text(productsList[index].price,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color: Colors.grey[700]),),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: productsList.length,
+                    ),
+                  )
                 ],
               ),
         ),

@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pharmacy/Pages/PHome.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pharmacy/Pages/maps.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../globals.dart';
@@ -48,9 +49,8 @@ class _AdminState extends State<Admin> {
 
   bool _showPassword = false;
 
-  register({String name , String email , String location , String password , String phone}) async {
+  register({String name , String email , String location , String license , String password , String phone}) async {
     try {
-
       showDialog(
           context: context,
           barrierDismissible: false,
@@ -68,9 +68,15 @@ class _AdminState extends State<Admin> {
         'email' : email,
         'password' : password,
         'phone' : phone,
+        'userType' : '2',
         'location' : location,
-        'image' : await MultipartFile.fromFile(_image.path,filename: 'image_${_image.path}')
+        'image' : await MultipartFile.fromFile(_image.path,filename: 'image_${_image.path}'),
+        'lat' : lat,
+        'long' : long,
+        'license' : license,
       });
+
+      print('Lat $lat Long $long');
 
       var response = await dioClient.post(baseURL + 'register',data: form);
 
@@ -87,12 +93,25 @@ class _AdminState extends State<Admin> {
         pref.setString('userImage', '${data['user']['image']}');
         pref.setString('userType', '${data['user']['userType']}');
         pref.setString('access_token', '${data['access_token']}');
+        pref.setString('userLicence', '${data['user']['license']}');
+
+        setState(() {
+          userId = pref.getString('userId');
+          userImage = pref.getString('userImage');
+          userPhone = pref.getString('userPhone');
+          userName = pref.getString('userName');
+          userEmail = pref.getString('userEmail');
+          userType = pref.getString('userType');
+          userLicence = pref.getString('userLicence');
+
+          locationSelected = false;
+        });
 
         Navigator.pop(context);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => AR()));
+                builder: (context) => Orders()));
 
         Fluttertoast.showToast(
             msg: "تم إنشاء الحساب بنجاح .. سيتم تسجيل الدخول تلقائيا",
@@ -146,6 +165,9 @@ class _AdminState extends State<Admin> {
 
       var response = await dioClient.post(baseURL + 'login',data: form);
 
+      print('reponse $response');
+
+
       var data = response.data;
 
       if(data['success'] == true){
@@ -159,12 +181,24 @@ class _AdminState extends State<Admin> {
         pref.setString('userImage', '${data['user']['image']}');
         pref.setString('userType', '${data['user']['userType']}');
         pref.setString('access_token', '${data['access_token']}');
+        pref.setString('userLicence', '${data['user']['license']}');
+
+        setState(() {
+          userId = pref.getString('userId');
+          userImage = pref.getString('userImage');
+          userPhone = pref.getString('userPhone');
+          userName = pref.getString('userName');
+          userEmail = pref.getString('userEmail');
+          userType = pref.getString('userType');
+          userLicence = pref.getString('userLicence');
+        });
+
 
         Navigator.pop(context);
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => AR()));
+                builder: (context) => Orders()));
 
         Fluttertoast.showToast(
             msg: "تم تسجيل الدخول بنجاح",
@@ -176,6 +210,19 @@ class _AdminState extends State<Admin> {
             fontSize: 16.0
         );
 
+      }
+      else{
+        print('22');
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+            msg: '${data['message']}',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 2,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
       }
 
     } on DioError catch (error) {
@@ -570,7 +617,7 @@ class _AdminState extends State<Admin> {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
-                              controller: location,
+                              controller: license,
                                 decoration: InputDecoration(
                               hintText: "التــرخيص ",
                               labelStyle: TextStyle(color: Colors.grey),
@@ -639,12 +686,12 @@ class _AdminState extends State<Admin> {
                             child: TextFormField(
                               controller: location,
                                 decoration: InputDecoration(
-                              hintText: "اضف موقعك ",
+                              hintText: "اضف عنوان موقعك ",
                               labelStyle: TextStyle(color: Colors.grey),
                               border: UnderlineInputBorder(
                                   borderSide: BorderSide.none),
                               icon: Icon(
-                                Icons.location_on,
+                                Icons.description,
                                 color: Colors.lightBlue.withOpacity(0.8),
                               ),
                             )),
@@ -665,23 +712,26 @@ class _AdminState extends State<Admin> {
                       height: 10,
                     ), //+++++++++++++++++++++++++++++++++++++++++++
                     Container(
-                      margin: EdgeInsets.all(20),
-                      width: 190,
+                      width: 250,
                       height: 50,
                       child: RaisedButton(
+                        onPressed: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Maps()));
+                        },
+
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(32),
                             side: BorderSide(color: Colors.white)),
-//                        onPressed: () {
-//                          Navigator.push(context,
-//                              MaterialPageRoute(builder: (context) => AR()));
-//                        },
                         color: Colors.blue,
                         textColor: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -689,13 +739,13 @@ class _AdminState extends State<Admin> {
                                   right: 10,
                                 ),
                                 child: Icon(
-                                  Icons.location_on,
+                                  locationSelected ? Icons.check : Icons.location_on,
                                   color: Colors.white,
                                   size: 23,
                                 ),
                               ), //_______________________________________________________________
                               Text(
-                                'اضف موقعك',
+                                locationSelected ? 'تم تحديد الموقع': 'اضف موقعك',
                                 style: TextStyle(
                                   fontSize: 25,
                                 ),
@@ -721,10 +771,19 @@ class _AdminState extends State<Admin> {
                             borderRadius: new BorderRadius.circular(32),
                             side: BorderSide(color: Colors.white)),
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => AR()));
-
-                          if(name.text.trim().length == 0){
+                          if(_image == null){
+                            Fluttertoast.showToast(
+                                msg: "قم باختيار صورتك الشخصيه اولا",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIos: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                            return;
+                          }
+                          else if(name.text.trim().length == 0){
                             Fluttertoast.showToast(
                                 msg: "يجب ادخال اسم المستخدم اولا",
                                 toastLength: Toast.LENGTH_SHORT,
@@ -748,18 +807,6 @@ class _AdminState extends State<Admin> {
                             );
                             return;
                           }
-                          else if(email.text.trim().length == 0){
-                            Fluttertoast.showToast(
-                                msg: "يجب ادخال البريد الالكتروني اولا",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIos: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                            );
-                            return;
-                          }
                           else if(phone.text.trim().length == 0){
                             Fluttertoast.showToast(
                                 msg: "يجب ادخال رقم الهاتف اولا",
@@ -774,7 +821,7 @@ class _AdminState extends State<Admin> {
                           }
                           else if(license.text.trim().length == 0){
                             Fluttertoast.showToast(
-                                msg: "يجب ادخال رقم الهاتف اولا",
+                                msg: "يجب ادخال رقم الترخيص اولا",
                                 toastLength: Toast.LENGTH_SHORT,
                                 gravity: ToastGravity.BOTTOM,
                                 timeInSecForIos: 1,
@@ -784,6 +831,20 @@ class _AdminState extends State<Admin> {
                             );
                             return;
                           }
+                          else if(email.text.trim().length == 0){
+                            Fluttertoast.showToast(
+                                msg: "يجب ادخال البريد الالكتروني اولا",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIos: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                            return;
+                          }
+
+
                           else if(location.text.trim().length == 0){
                             Fluttertoast.showToast(
                                 msg: "يجب ادخال وصف الموقع اولا",
@@ -796,18 +857,6 @@ class _AdminState extends State<Admin> {
                             );
                             return;
                           }
-                          else if(_image == null){
-                            Fluttertoast.showToast(
-                                msg: "قم باختيار صورتك الشخصيه اولا",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIos: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                            );
-                            return;
-                          }
                           else if(location == null){
                             Fluttertoast.showToast(
                                 msg: "قم بكتابة موقعك اولا",
@@ -832,23 +881,13 @@ class _AdminState extends State<Admin> {
                             );
                             return;
                           }
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return Container(
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-                          );
                           register(
                               name: name.text,
                               password: password.text,
                               phone: phone.text,
                               email: email.text,
-                              location: location.text
+                              location: location.text,
+                              license: license.text
                           );
                         },
                         color: Colors.blue,

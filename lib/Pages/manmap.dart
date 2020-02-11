@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +8,8 @@ import 'package:pharmacy/Pages/Admn.dart';
 import 'package:pharmacy/Pages/Home.dart';
 import 'package:pharmacy/Pages/UserRe.dart';
 import 'package:pharmacy/Pages/think.dart';
+import 'package:pharmacy/globals.dart';
+import 'package:pharmacy/modles/pharmacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter/widgets.dart';
@@ -27,17 +30,8 @@ class _FirstScreen extends State<FirstScreen> {
 
   var currentLocation;
 
-  // _requstDialog(BuildContext context){
-  // return showDialog(context: context,builder: (context){
-  //     return AlertDialog(title: Text('طلب دواء'),content: TextField(),actions: <Widget>[
-  //       MaterialButton(elevation: 5.0,child: Text("اطلب"),onPressed: (){},),
-  //       MaterialButton(elevation: 5.0,child: Text("الغاء"),onPressed: (){
-  //         Navigator.of(context).pop();
-  //       },)
-  //     ],);
-  //   });
-  // }
   File _image;
+  var name = TextEditingController();
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
 
@@ -46,9 +40,133 @@ class _FirstScreen extends State<FirstScreen> {
     });
   }
 
+  var loading = false;
+  List<Pharmacy> pharmacyList;
+  final Map<String, Marker> _markers = {};
+
+
+  getPharmacies() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+
+
+      var response = await dioClient.get(baseURL + 'getPharmacies');
+
+      print('response $response');
+
+      var data = response.data;
+
+      if(data['success'] == true){
+
+        pharmacyList = new List();
+
+        var pharmacies = data['pharmacies'] as List;
+
+        pharmacies.forEach((pharmacy){
+          pharmacyList.add(Pharmacy.fromJson(pharmacy));
+        });
+
+        print('LENGTH ${pharmacies.length}');
+        setState(() {
+          loading = false;
+        });
+      }
+    } on DioError catch (error) {
+      setState(() {
+        loading = false;
+      });
+      print('ERROR Code ${error.response.statusCode}');
+      print('ERROR Message ${error.response.data}');
+      switch (error.type) {
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.CANCEL:
+          throw error;
+          break;
+        default:
+          throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  createOrder({String name}) async {
+    try {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+      );
+
+      FormData form = FormData.fromMap({
+        'name' : name,
+        'userId' : userId,
+        'image' : await MultipartFile.fromFile(_image.path,filename: 'image_${_image.path}')
+      });
+
+      dioClient.options.headers['Accept'] = 'application/json';
+      dioClient.options.headers['content-Type'] = 'application/json';
+
+      var response = await dioClient.post(baseURL + 'createOrder',data: form);
+
+      print('reponse $response');
+
+
+      var data = response.data;
+
+      if(data['success'] == true){
+
+
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FirstScreen()));
+        Fluttertoast.showToast(
+            msg: "تم ارسال طلبك بنجاح ",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIos: 2,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+
+    } on DioError catch (error) {
+      Navigator.pop(context);
+      print('ERROR Code ${error.response.statusCode}');
+      print('ERROR Message ${error.response.data}');
+      switch (error.type) {
+        case DioErrorType.CONNECT_TIMEOUT:
+        case DioErrorType.SEND_TIMEOUT:
+        case DioErrorType.CANCEL:
+          throw error;
+          break;
+        default:
+          throw error;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    getPharmacies();
+
     Geolocator().getCurrentPosition().then((currloc) {
       setState(() {
         currentLocation = currloc;
@@ -124,7 +242,7 @@ class _FirstScreen extends State<FirstScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => UserRe()),
+                      MaterialPageRoute(builder: (context) => MyOrders()),
                     );
                   }), //_________________________________________
               SizedBox(
@@ -214,6 +332,7 @@ class _FirstScreen extends State<FirstScreen> {
                       onMapCreated: _onMapCreated,
                       myLocationEnabled: true,
                       mapType: MapType.normal,
+                      markers: _markers.values.toSet(),
                     ), // _____________MapCode___________
                      //__________________Start SlideupPanel____________
                     SlidingUpPanel(
@@ -223,7 +342,7 @@ class _FirstScreen extends State<FirstScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              Padding(padding: EdgeInsets.only(top: 90)),
+                              Padding(padding: EdgeInsets.only(top: 40)),
                               _image == null
                                   ? Container(
                                       child: Column(
@@ -255,8 +374,8 @@ class _FirstScreen extends State<FirstScreen> {
                                       ),
                                     )
                                   : Container(
-                                      height: 200,
-                                      width: 300,
+                                      height: 150,
+                                      width: 150,
                                       child: Image.file(_image)), //++++++++
 
                               SizedBox(
@@ -278,6 +397,7 @@ class _FirstScreen extends State<FirstScreen> {
                                       padding: const EdgeInsets.only(
                                           right: 40, top: 20),
                                       child: TextFormField(
+                                        controller: name,
                                           decoration: InputDecoration(
                                         hintText: "اكتب اسم الدواء...",
                                         labelStyle:
@@ -307,10 +427,33 @@ class _FirstScreen extends State<FirstScreen> {
                                           new BorderRadius.circular(32),
                                       side: BorderSide(color: Colors.white)),
                                   onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Admin()));
+                                    if(_image == null){
+                                      Fluttertoast.showToast(
+                                          msg: "يجب اختيار الصوره اولا",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIos: 1,
+                                          backgroundColor: Colors.red,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0
+                                      );
+                                      return;
+                                    }
+                                    else if(name.text.trim().length == 0){
+                                      Fluttertoast.showToast(
+                                          msg: "يجب ادخال الاسم اولا",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.BOTTOM,
+                                          timeInSecForIos: 1,
+                                          backgroundColor: Colors.red,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0
+                                      );
+                                      return;
+                                    }
+                                    else{
+                                      createOrder(name: name.text);
+                                    }
                                   },
                                   color: Colors.blue,
                                   textColor: Colors.white,
@@ -366,8 +509,22 @@ class _FirstScreen extends State<FirstScreen> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
+
     setState(() {
       mapController = controller;
+
+      _markers.clear();
+      for (final pharmacy in pharmacyList) {
+        final marker = Marker(
+          markerId: MarkerId(pharmacy.name),
+          position: LatLng(double.parse(pharmacy.lat), double.parse(pharmacy.long)),
+          infoWindow: InfoWindow(
+            title: pharmacy.name,
+            snippet: '${pharmacy.phone}',
+          ),
+        );
+        _markers[pharmacy.name] = marker;
+      }
     });
   }
 }

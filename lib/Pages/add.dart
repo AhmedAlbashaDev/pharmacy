@@ -55,7 +55,7 @@ class _AddState extends State<Add> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => AR()));
+                builder: (context) => Orders()));
 
         Fluttertoast.showToast(
             msg: "تم إضافة المنتج بنجاح",
@@ -194,6 +194,7 @@ class _AddState extends State<Add> {
                         padding: const EdgeInsets.only(right: 20),
                         child: TextFormField(
                           controller: price,
+                          keyboardType: TextInputType.phone,
                           decoration: InputDecoration(
                             hintText: "سعر المنتج",
                             labelStyle: TextStyle(color: Colors.grey),

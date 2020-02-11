@@ -40,6 +40,7 @@ class _MyappState extends State<Myapp> with SingleTickerProviderStateMixin{
       userName = pref.getString('userName');
       userEmail = pref.getString('userEmail');
       userType = pref.getString('userType');
+      userLicence = pref.getString('userLicence');
     });
   }
 
@@ -59,9 +60,11 @@ class _MyappState extends State<Myapp> with SingleTickerProviderStateMixin{
     animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         print(end.toString());
-        if(end > 1){
+        if(end > 0){
           if(userId != null){
-            if(userType == 1){
+            print('userType $userType');
+            print('userName $userName');
+            if(userType == '1'){
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -72,7 +75,7 @@ class _MyappState extends State<Myapp> with SingleTickerProviderStateMixin{
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AR(),
+                    builder: (context) => Orders(),
                   ));
             }
           }
@@ -111,25 +114,27 @@ class _MyappState extends State<Myapp> with SingleTickerProviderStateMixin{
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         backgroundColor: Colors.white,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 160,),
-            Image.asset(
-              'lib/assets/mylogo.jpg',
-              width: MediaQuery.of(context).size.width / 100 * 100,
-              height: MediaQuery.of(context).size.height / 100 * 50,
-            ),//___________logo______________________
-            Padding(
-              padding: EdgeInsets.only(top: 50),
-              child: Text('ابحث عن دوائك بكل ســهــوله'),
-            ),
+        body: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 160,),
+              Image.asset(
+                'lib/assets/mylogo.jpg',
+                width: MediaQuery.of(context).size.width / 100 * 100,
+                height: MediaQuery.of(context).size.height / 100 * 50,
+              ),//___________logo______________________
+              Padding(
+                padding: EdgeInsets.only(top: 50),
+                child: Text('ابحث عن دوائك بكل ســهــوله'),
+              ),
 
-            Padding(
-              padding: EdgeInsets.only(bottom: 1),
-              child:Text('جميع الحقوق محفوظة لدي بندول',style: TextStyle(fontSize: 15),) ,
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(bottom: 1),
+                child:Text('جميع الحقوق محفوظة لدي بندول',style: TextStyle(fontSize: 15),) ,
+              ),
+            ],
+          ),
         ),
 
       ),

@@ -27,7 +27,7 @@ class AdminPro extends StatelessWidget {
                         borderRadius: BorderRadius.circular(80),
                         child: FadeInImage.assetNetwork(
                           placeholder: 'lib/assets/mylogo.jpg',
-                          image: baseImageURL + userImage,
+                          image: userImage != null ?  baseImageURL + userImage : baseImageURL + '',
                           width: 120,
                           height: 120,
                           fit: BoxFit.cover,
@@ -49,6 +49,7 @@ class AdminPro extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
+                                enabled: false,
                                 decoration: InputDecoration(
                                   hintText: userName != null ? userName : 'الاسم',
                               labelStyle: TextStyle(color: Colors.grey),
@@ -79,6 +80,7 @@ class AdminPro extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
+                                enabled: false,
                                 decoration: InputDecoration(
                                   hintText: '*************',
                               labelStyle: TextStyle(color: Colors.grey),
@@ -109,6 +111,7 @@ class AdminPro extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
+                                enabled: false,
                                 decoration: InputDecoration(
                                   hintText: userPhone != null ? userPhone : 'رقم الجوال',
                               labelStyle: TextStyle(color: Colors.grey),
@@ -139,6 +142,7 @@ class AdminPro extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
+                              enabled: false,
                                 decoration: InputDecoration(
                                   hintText: userLicence != null ? userLicence : 'رقم الرخصه',
                               labelStyle: TextStyle(color: Colors.grey),
@@ -169,6 +173,7 @@ class AdminPro extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextFormField(
+                              enabled: false,
                                 decoration: InputDecoration(
                                   hintText: userEmail != null ? userEmail : 'البريد الالكتروني',
                               labelStyle: TextStyle(color: Colors.grey),
