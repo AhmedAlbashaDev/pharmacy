@@ -642,7 +642,7 @@ class _UserState extends State<User> {
                                 borderRadius: new BorderRadius.circular(32),
                                 side: BorderSide(color: Colors.white)),
                             onPressed: () {
-                              if(name.text.trim().length < 0){
+                              if(name.text.trim().length == 0){
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال اسم المستخدم اولا",
                                     toastLength: Toast.LENGTH_SHORT,
@@ -654,7 +654,7 @@ class _UserState extends State<User> {
                                 );
                                 return;
                               }
-                              else if(password.text.trim().length < 0){
+                              else if(password.text.trim().length == 0){
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال كلمة المرور اولا",
                                     toastLength: Toast.LENGTH_SHORT,
@@ -666,7 +666,7 @@ class _UserState extends State<User> {
                                 );
                                 return;
                               }
-                              else if(email.text.trim().length < 0){
+                              else if(email.text.trim().length == 0){
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال البريد الالكتروني اولا",
                                     toastLength: Toast.LENGTH_SHORT,
@@ -678,7 +678,7 @@ class _UserState extends State<User> {
                                 );
                                 return;
                               }
-                              else if(phone.text.trim().length < 0){
+                              else if(phone.text.trim().length == 0){
                                 Fluttertoast.showToast(
                                     msg: "يجب ادخال رقم الهاتف اولا",
                                     toastLength: Toast.LENGTH_SHORT,
